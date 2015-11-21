@@ -6,10 +6,7 @@ var next = 0;
 function setup() {
   var c = createCanvas(windowWidth, windowHeight);
   //looperSystem = new LooperSystem(windowWidth/2, windowHeight/2, 200, 800);
-
-
 }
-var t = 0.01;
 
 function draw() {
   background(0);
@@ -33,16 +30,11 @@ function draw() {
       looperSystemArray.splice(i, 1);
     }
   }
-  
 
   /*
   for(var i = 0; i < cicleArray.length-1; i++) {
     cicleArray[i].display();
   }*/
-
-  
-  
-
 }
 
 var Circle = function(x, y, diameter) {
