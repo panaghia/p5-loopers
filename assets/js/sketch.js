@@ -1,4 +1,3 @@
-
 var looperSystemArray = [];
 var cicleArray = [];
 
@@ -10,12 +9,14 @@ function setup() {
 
 
 }
+var t = 0.01;
 
 function draw() {
   background(0);
 
+  
   if(millis() > next) {
-    next +=  random(3000,7000);
+    next +=  random(7000,12000);
     var randomWidth = random(0, windowWidth);
     var randomHeight = random(0, windowHeight);
     var randomRadius = random(30, 100);
@@ -25,14 +26,15 @@ function draw() {
   }
 
   for(var i = 0; i < looperSystemArray.length-1; i++) {
-    looperSystemArray[i].addLooper();
-    looperSystemArray[i].run();
-    if(looperSystemArray[i].isDead()) {
+    var looperSystem = looperSystemArray[i];
+    looperSystem.addLooper();
+    looperSystem.run();
+    if(looperSystem.isDead()) {
       looperSystemArray.splice(i, 1);
-      console.log('removing '+i);
-      // TO DO add a fade out animation?
     }
   }
+  
+
   /*
   for(var i = 0; i < cicleArray.length-1; i++) {
     cicleArray[i].display();
@@ -57,8 +59,7 @@ Circle.prototype.display = function() {
   noSmooth();
 };
 
-
-// 
+ 
 var LooperSystem = function(centerX, centerY, radian, velocity) {
   this.centerX = centerX;
   this.centerY = centerY;
@@ -66,34 +67,32 @@ var LooperSystem = function(centerX, centerY, radian, velocity) {
   this.radian = radian;
   this.velocity = velocity;
   this.lifeSpan = 1000.0;
-
+  this.childLifeSpan = 155.0;
 };
 
 LooperSystem.prototype.addLooper = function () {
-  this.loopers.push(new Looper(this.centerX, this.centerY, this.radian, this.velocity));
+  if(this.lifeSpan > 0)
+    this.loopers.push(new Looper(this.centerX, this.centerY, this.radian, this.velocity, this.childLifeSpan));
 };
 
+LooperSystem.prototype.isDead = function () {
+  return this.lifeSpan < -this.childLifeSpan ? true : false;
+}
+
 LooperSystem.prototype.run = function () {
+
   for (var i = this.loopers.length-1; i>=0; i--) {
     var l = this.loopers[i];
     l.run();
-    if(l.isDead()) {
-      this.loopers.splice(i, 1);
-    }
   }
   this.lifeSpan -= 1.0;
 }
 
-LooperSystem.prototype.isDead = function() {
-  return this.lifeSpan < 0 ? true : false;
-}
-
-var Looper = function(centerX, centerY, radian, velocity) {
+var Looper = function(centerX, centerY, radian, velocity, lifeSpan) {
   this.centerX = centerX;
   this.centerY = centerY;
   this.angle = millis()/float(velocity);
-  //this.angle = millis()/float(800);
-  this.lifeSpan = 255.0;
+  this.lifeSpan = lifeSpan;
   this.dead = false;
   this.radian = radian;
 };
@@ -104,14 +103,11 @@ Looper.prototype.run = function () {
 }
 
 Looper.prototype.isDead = function() {
-  return this.dead;
+  return this.lifeSpan < 0 ? true : false;
 }
 
 Looper.prototype.update = function () {
   this.lifeSpan-=1;
-  if(this.lifeSpan < 0)
-    this.dead = true;
-
   this.angle +=0.01;
 }
 
@@ -120,7 +116,7 @@ Looper.prototype.display = function() {
   fill(255,0,0, this.lifeSpan);
   var x = this.centerX + sin(this.angle )*this.radian;
   var y = this.centerY + cos(this.angle )*this.radian;
-  ellipse(x, y, 5, 5);
+  ellipse(x, y, 3, 3);
 
   noSmooth();
   noFill();
